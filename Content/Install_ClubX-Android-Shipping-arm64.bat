@@ -12,29 +12,29 @@ for /f "delims=" %%A in ('%ADB% %DEVICE% shell "echo $EXTERNAL_STORAGE"') do @se
 %ADB% %DEVICE% uninstall run.xrun.clubxvr
 @echo.
 @echo Installing existing application. Failures here indicate a problem with the device (connection or storage permissions) and are fatal.
-%ADB% %DEVICE% install ClubX-Android-Shipping-arm64.apk
+%ADB% %DEVICE% install AFS_ClubX-Android-Shipping-arm64.apk
 @if "%ERRORLEVEL%" NEQ "0" goto Error
 %ADB% %DEVICE% shell pm list packages run.xrun.clubxvr
-
-
-
+%ADB% %DEVICE% shell pm grant run.xrun.clubxvr android.permission.FOREGROUND_SERVICE >nul 2>&1
+%ADB% %DEVICE% shell pm grant run.xrun.clubxvr android.permission.FOREGROUND_SERVICE_DATA_SYNC >nul 2>&1
+%ADB% %DEVICE% shell pm grant run.xrun.clubxvr android.permission.POST_NOTIFICATIONS >nul 2>&1
 %ADB% %DEVICE% shell rm -r %STORAGE%/UnrealGame/ClubX
 %ADB% %DEVICE% shell rm -r %STORAGE%/UnrealGame/UECommandLine.txt
 %ADB% %DEVICE% shell rm -r %STORAGE%/obb/run.xrun.clubxvr
 %ADB% %DEVICE% shell rm -r %STORAGE%/Android/obb/run.xrun.clubxvr
 %ADB% %DEVICE% shell rm -r %STORAGE%/Download/obb/run.xrun.clubxvr
+@echo.
+@echo Installing new data. Failures here indicate storage problems (missing SD card or bad permissions) and are fatal.
+	%AFS% %DEVICE% -p run.xrun.clubxvr -k C9DB689A4807415856F32BB692395FC8 push main.31.run.xrun.clubxvr.obb "^mainobb"
+if "%ERRORLEVEL%" NEQ "0" goto Error
 
 
 
 
 
 
-
-
-
-
-
-
+%ADB% %DEVICE% install -r ClubX-Android-Shipping-arm64.apk
+if "%ERRORLEVEL%" NEQ "0" goto Error
 @echo.
 
 
